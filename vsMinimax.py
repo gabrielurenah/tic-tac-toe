@@ -127,7 +127,7 @@ while True:
         else: 
             block_choice = getBestMove(board, players[current_player_idx])
             play_move(board ,players[current_player_idx], block_choice)
-            print("AI plays move: " + str(block_choice))
+            print("CPU jugo: " + str(block_choice))
 
         os.system('clear')
         print_board(board)
