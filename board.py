@@ -9,71 +9,71 @@ class Board:
   
   # [(0,0) -> (0,1) -> (0,2)], [(1,0) -> (1,1) -> (1,2)], [(2,0), (2,1), (2,2)]
   def check_row(self):
-    list_symbols, list_labels_temp = [], []
+    list_pieces, list_labels_temp = [], []
     winner = False
-    win_symbol = ""
+    winning_piece = ""
     b = self.board
     for i in range(len(b)):
-        list_symbols.append(b[i]["symbol"])
+        list_pieces.append(b[i]["piece"])
         list_labels_temp.append(b[i])
         if (i + 1) % 3 == 0:
-            if (list_symbols[0] == list_symbols[1] == list_symbols[2]):
-                if list_symbols[0] != "":
+            if (list_pieces[0] == list_pieces[1] == list_pieces[2]):
+                if list_pieces[0] != "":
                     winner = True
-                    win_symbol = list_symbols[0]
+                    winning_piece = list_pieces[0]
                     self.draw_winning_pattern(list_labels_temp,[0,1,2])
-            list_symbols = []
+            list_pieces = []
             list_labels_temp = []
 
-    return [winner, win_symbol]
+    return [winner, winning_piece]
 
   # [(0,0) -> (1,0) -> (2,0)], [(0,1) -> (1,1) -> (2,1)], [(0,2), (1,2), (2,2)]
   def check_col(self):
     winner = False
-    win_symbol = ""
+    winning_piece = ""
     b = self.board
     CANT_COL = 3
     
     for i in range(CANT_COL):
-        if (b[i]["symbol"] ==
-            b[i + CANT_COL]["symbol"] ==
-            b[i + CANT_COL + CANT_COL]["symbol"]):
-            if b[i]["symbol"] != "":
+        if (b[i]["piece"] ==
+            b[i + CANT_COL]["piece"] ==
+            b[i + CANT_COL + CANT_COL]["piece"]):
+            if b[i]["piece"] != "":
                 winner = True
-                win_symbol = b[i]["symbol"]
+                winning_piece = b[i]["piece"]
                 self.draw_winning_pattern(b,[i, i+ CANT_COL, i+CANT_COL+CANT_COL])
 
-    return [winner, win_symbol]
+    return [winner, winning_piece]
 
   def check_diagonal(self):
     winner = False
-    win_symbol = ""
+    winning_piece = ""
     i, j, CANT_COL = 0, 2 ,3
     b = self.board
 
     # top-left to bottom-right diagonal (0, 0) -> (1,1) -> (2, 2)
-    if b[i]["symbol"] == b[i + (CANT_COL + 1)]["symbol"] == b[(CANT_COL + CANT_COL) + (i + 2)]["symbol"]:
-        if b[i]["symbol"] != "":
+    if b[i]["piece"] == b[i + (CANT_COL + 1)]["piece"] == b[(CANT_COL + CANT_COL) + (i + 2)]["piece"]:
+        if b[i]["piece"] != "":
             winner = True
-            win_symbol = b[i]["symbol"]
+            winning_piece = b[i]["piece"]
             self.draw_winning_pattern(b,[i, i + (CANT_COL + 1), (CANT_COL + CANT_COL) + (i + 2)])
 
     # top-right to bottom-left diagonal (0, 0) -> (1,1) -> (2, 2)
-    elif b[j]["symbol"] == b[j + (CANT_COL - 1)]["symbol"] == b[j + (CANT_COL + 1)]["symbol"]:
-        if b[j]["symbol"] != "":
+    elif b[j]["piece"] == b[j + (CANT_COL - 1)]["piece"] == b[j + (CANT_COL + 1)]["piece"]:
+        if b[j]["piece"] != "":
             winner = True
-            win_symbol = b[j]["symbol"]
+            winning_piece = b[j]["piece"]
             self.draw_winning_pattern(b, [j, j + (CANT_COL - 1), j + (CANT_COL + 1)])
     else:
         winner = False
 
-    return [winner, win_symbol]
+    return [winner, winning_piece]
 
   # si todas las celdas estan llenas y no hay ganador, hay un empate
   def check_for_draw(self):
     b = self.board
     for i in range(len(b)):
-        if b[i]["ticked"] is False:
+        if b[i]["piece"] == "":
             return [False, ""]
     return [True, ""]
 

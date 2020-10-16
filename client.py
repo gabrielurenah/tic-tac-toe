@@ -36,7 +36,7 @@ for x in range(3):
         lbl.bind("<Button-1>", lambda e, xy=[x, y]: get_coordinates(xy))
         lbl.grid(row=x, column=y)
 
-        dict_labels = {"xy": [x, y], "symbol": "", "label": lbl, "ticked": False}
+        dict_labels = {"xy": [x, y], "piece": "", "label": lbl}
         board.getBoard().append(dict_labels)
 
 lbl_status = tk.Label(top_frame, text="NO esta conectado al servidor", font="Helvetica 14 bold")
@@ -76,12 +76,12 @@ def init(arg0, arg1):
     sleep(3)
     b = board.getBoard()
     for i in range(len(b)):
-        b[i]["symbol"] = ""
-        b[i]["ticked"] = False
+        b[i]["piece"] = ""
         b[i]["label"]["text"] = ""
         b[i]["label"].config(foreground="black", highlightbackground="grey",highlightcolor="grey", highlightthickness=1)
 
     lbl_status.config(foreground="black")
+    lbl_status["text"] = ""
     lbl_status["text"] = "Ya va a empezar el juego"
     sleep(1)
 
@@ -102,11 +102,10 @@ def get_coordinates(xy):
     label = board.getBoard()[label_index]
 
     if your_turn:
-        if label["ticked"] is False:
+        if label["piece"] == "":
             label["label"].config(foreground=player1.getColor())
             label["label"]["text"] = player1.getPiece()
-            label["ticked"] = True
-            label["symbol"] = player1.getPiece()
+            label["piece"] = player1.getPiece()
             # enviar ubicacion en xy al socket
             client.send("~xy~" + str(xy[0]) + "~" + str(xy[1]))
             your_turn = False
@@ -119,8 +118,10 @@ def get_coordinates(xy):
             elif result[0] is True and result[1] == "":  # empatar
                 result_text("Draw", "blue")
             else:
+                lbl_status["text"] = ""
                 lbl_status["text"] = "Turno de: " + player2.getName()
     else:
+        lbl_status["text"] = ""
         lbl_status["text"] = "Favor de esperar su turno!"
         lbl_status.config(foreground="red")
 
@@ -137,12 +138,13 @@ def receive_message_from_server(sckt):
 
         elif from_server.startswith("opponent_name~"):
             temp = from_server.replace("opponent_name~", "")
-            temp = temp.replace("symbol", "")
+            temp = temp.replace("piece", "")
             name_index = temp.find("~")
-            symbol_index = temp.rfind("~")
+            piece_index = temp.rfind("~")
             player2.setName(temp[0:name_index])
-            player1.setPiece(temp[symbol_index:len(temp)])
+            player1.setPiece(temp[piece_index:len(temp)])
             player2.setPiece("X" if player1.getPiece() == "O" else "O")
+            lbl_status["text"] = ""
             lbl_status["text"] = player2.getName() + " se ha conectado!"
             sleep(3)
             toggle_turn(player1.getPiece() == "O")
@@ -155,10 +157,9 @@ def receive_message_from_server(sckt):
             # actualizar tablero
             label_index = int(_x) * CANT_COL + int(_y)
             label = board.getBoard()[label_index]
-            label["symbol"] = player2.getPiece()
+            label["piece"] = player2.getPiece()
             label["label"]["text"] = player2.getPiece()
             label["label"].config(foreground=player2.getColor())
-            label["ticked"] = True
 
             # este cambio hace que el oponente gane/pierda/empate?
             result = board.status()
@@ -170,6 +171,7 @@ def receive_message_from_server(sckt):
                 result_text("Draw", "blue")
             else:
                 your_turn = True
+                lbl_status["text"] = ""
                 lbl_status["text"] = "Es su turno!"
                 lbl_status.config(foreground="black")
 

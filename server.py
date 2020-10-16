@@ -32,8 +32,8 @@ def send_recv_data(client_connection, client_ip_addr):
 
     if len(jugadores) > 1:
         sleep(1)
-        jugadores[0].send('opponent_name~' + str(nombres[1]) + 'symbolO')
-        jugadores[1].send('opponent_name~' + str(nombres[0]) + 'symbolX')
+        jugadores[0].send('opponent_name~' + str(nombres[1]) + 'pieceO')
+        jugadores[1].send('opponent_name~' + str(nombres[0]) + 'pieceX')
 
 
     while True:
